@@ -11,7 +11,25 @@ function getSQSMsg(body) {
     MessageId: 'msgId',
     ReceiptHandle: 'handle',
     MD5OfBody: 'abcdeabcdeabcdeabcdeabcdeabcde12',
-    Body: body
+    Body: body,
+    MessageAttributes: {
+      SomeNumber: {
+        DataType: 'Number',
+        StringValue: '1'
+      },
+      SomeString: {
+        DataType: 'String',
+        StringValue: 's'
+      },
+      SomeBinary: {
+        DataType: 'Binary',
+        BinaryValue: new Buffer(['s'])
+      },
+      SomeCustomBinary: {
+        DataType: 'CustomBinary',
+        BinaryValue: new Buffer(['c'])
+      }
+    }
   }
 }
 
@@ -49,6 +67,12 @@ describe('Message', () => {
     msg.body.should.be.an('object')
     msg.body.should.have.property('Message').equal('foo')
     msg.body.should.have.property('bar').equal('baz')
+    msg.attributes.should.be.eql({
+      SomeNumber: 1,
+      SomeString: 's',
+      SomeBinary: new Buffer(['s']),
+      SomeCustomBinary: new Buffer(['c'])
+    })
   })
   it('calls Squiss.deleteMessage on delete', (done) => {
     const msg = new Message({

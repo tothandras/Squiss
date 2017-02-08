@@ -407,7 +407,8 @@ class Squiss extends EventEmitter {
     const params = {
       QueueUrl: queueUrl,
       MaxNumberOfMessages: this._opts.receiveBatchSize,
-      WaitTimeSeconds: this._opts.receiveWaitTimeSecs
+      WaitTimeSeconds: this._opts.receiveWaitTimeSecs,
+      MessageAttributeNames: ['All']
     }
     if (this._opts.visibilityTimeoutSecs !== undefined) {
       params.VisibilityTimeout = this._opts.visibilityTimeoutSecs

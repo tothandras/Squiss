@@ -226,7 +226,8 @@ describe('index', () => {
           QueueUrl: 'foo',
           MaxNumberOfMessages: 10,
           WaitTimeSeconds: 20,
-          VisibilityTimeout: 10
+          VisibilityTimeout: 10,
+          MessageAttributeNames: ['All']
         })
       })
     })

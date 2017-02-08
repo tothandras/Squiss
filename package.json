@@ -37,7 +37,8 @@
   },
   "homepage": "https://github.com/TechnologyAdvice/Squiss#readme",
   "dependencies": {
-    "aws-sdk": "^2.10.0"
+    "aws-sdk": "^2.10.0",
+    "lodash.reduce": "4.6.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

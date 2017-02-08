@@ -4,6 +4,8 @@
 
 'use strict'
 
+const reduce = require('lodash.reduce')
+
 /**
  * The message class is a wrapper for Amazon SQS messages that provides the raw and parsed message body,
  * optionally removed SNS wrappers, and provides convenience functions to delete or keep a given message.
@@ -33,6 +35,7 @@ class Message {
       this.topicName = unwrapped.TopicArn.substr(unwrapped.TopicArn.lastIndexOf(':') + 1)
     }
     this.body = Message._formatMessage(this.body, opts.bodyFormat)
+    this.attributes = Message._parseMessageAttributes(opts.msg.MessageAttributes)
     this._squiss = opts.squiss
     this._handled = false
   }
@@ -83,6 +86,39 @@ Message._formatMessage = (msg, format) => {
   switch (format) {
   case 'json': return JSON.parse(msg)
   default: return msg
+  }
+}
+
+/**
+ * Parses the MessageAttributes
+ * @param {Object} messageAttributes
+ * @returns {Object} Key - value pairs
+ * @private
+ */
+Message._parseMessageAttributes = (messageAttributes) => {
+  return reduce(messageAttributes, (parsedAttributes, unparsedAttribute, name) => Object.assign(parsedAttributes, {
+    [name]: Message._parseAttributeValue(unparsedAttribute)
+  }), {})
+}
+
+/**
+ * Parses a value of a MessageAttribute
+ * @param {Object} unparsedAttribute
+ * @returns {number|string|Buffer}
+ * @private
+ */
+Message._parseAttributeValue = (unparsedAttribute) => {
+  const type = unparsedAttribute.DataType
+  const stringValue = unparsedAttribute.StringValue
+  const binaryValue = unparsedAttribute.BinaryValue
+
+  switch (type) {
+  case 'Number':
+    return Number(stringValue)
+  case 'Binary':
+    return binaryValue
+  default:
+    return stringValue || binaryValue
   }
 }
 
